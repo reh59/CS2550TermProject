@@ -82,10 +82,10 @@ node * dequeue( void ) {
  * of the tree (with their respective
  * pointers, if the verbose_output flag is set.
  */
-void print_leaves( node * root ) {
+void print_leaves() {
   int i;
-  node * c = root;
-  if (root == NULL) {
+  node * c = root_node;
+  if (root_node == NULL) {
     printf("Empty tree.\n");
     return;
   }
@@ -114,9 +114,9 @@ void print_leaves( node * root ) {
  * of the tree, which length in number of edges
  * of the path from the root to any leaf.
  */
-int height( node * root ) {
+int height() {
   int h = 0;
-  node * c = root;
+  node * c = root_node;
   while (!c->is_leaf) {
     c = c->pointers[0];
     h++;
@@ -148,23 +148,23 @@ int path_to_root( node * root, node * child ) {
  * to the keys also appear next to their respective
  * keys, in hexadecimal notation.
  */
-void print_tree( node * root ) {
+void print_tree() {
 
   node * n = NULL;
   int i = 0;
   int rank = 0;
   int new_rank = 0;
 
-  if (root == NULL) {
+  if (root_node == NULL) {
     printf("Empty tree.\n");
     return;
   }
   queue = NULL;
-  enqueue(root);
+  enqueue(root_node);
   while( queue != NULL ) {
     n = dequeue();
     if (n->parent != NULL && n == n->parent->pointers[0]) {
-      new_rank = path_to_root( root, n );
+      new_rank = path_to_root( root_node, n );
       if (new_rank != rank) {
       rank = new_rank;
       printf("\n");
@@ -233,9 +233,9 @@ node * find_leaf( node * root, unsigned char *key, bool verbose ) {
 /* Finds and returns the record to which
  * a key refers.
  */
-record * find( node * root, unsigned char *key, bool verbose ) {
+record * find( unsigned char *key) {
   int i = 0;
-  node * c = find_leaf( root, key, verbose );
+  node * c = find_leaf( root_node, key, false );
   if (c == NULL) return NULL;
   for (i = 0; i < c->num_keys; i++)
     if (memcmp(c->keys[i], key) == 0) break;
@@ -617,7 +617,7 @@ node * start_new_tree(unsigned char *key, record * pointer) {
  * however necessary to maintain the B+ tree
  * properties.
  */
-node * insert( node * root, dbRecord * record_ptr ) {
+node * insert(dbRecord * record_ptr ) {
 
   record * pointer;
   node * leaf;
@@ -626,8 +626,8 @@ node * insert( node * root, dbRecord * record_ptr ) {
    * duplicates.
    */
 
-  if (find(root, record_ptr->key, false) != NULL)
-    return root;
+  if (find(record_ptr->key) != NULL)
+    return root_node;
 
   /* Create a new record for the
    * value.
@@ -639,29 +639,30 @@ node * insert( node * root, dbRecord * record_ptr ) {
    * Start a new tree.
    */
 
-  if (root == NULL) 
-    return start_new_tree(record_ptr->key, pointer);
-
+  if (root_node == NULL) {
+    root_node = start_new_tree(record_ptr->key, pointer);
+	return root_node;
+  }
 
   /* Case: the tree already exists.
    * (Rest of function body.)
    */
 
-  leaf = find_leaf(root, record_ptr->key, false);
+  leaf = find_leaf(root_node, record_ptr->key, false);
 
   /* Case: leaf has room for key and pointer.
    */
 
   if (leaf->num_keys < order - 1) {
     leaf = insert_into_leaf(leaf, record_ptr->key, pointer);
-    return root;
+    return root_node;
   }
 
 
   /* Case:  leaf must be split.
    */
 
-  return insert_into_leaf_after_splitting(root, leaf, record_ptr->key, pointer);
+  return insert_into_leaf_after_splitting(root_node, leaf, record_ptr->key, pointer);
 }
 
 
@@ -1068,18 +1069,18 @@ node * delete_entry( node * root, node * n, unsigned char *key, void * pointer )
 
 /* Master deletion function.
  */
-node * delete(node * root, unsigned char *key) {
+node * delete(unsigned char *key) {
 
   node * key_leaf;
   record * key_record;
 
-  key_record = find(root, key, false);
-  key_leaf = find_leaf(root, key, false);
+  key_record = find(key);
+  key_leaf = find_leaf(root_node, key, false);
   if (key_record != NULL && key_leaf != NULL) {
-    root = delete_entry(root, key_leaf, key, key_record);
+    root_node = delete_entry(root_node, key_leaf, key, key_record);
     free(key_record);
   }
-  return root;
+  return root_node;
 }
 
 

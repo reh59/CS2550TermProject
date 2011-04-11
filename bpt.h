@@ -102,19 +102,22 @@ node * queue = NULL;
 bool verbose_output = false;
 
 
+// this keeps track of the root node of the tree 
+// so it doesn't have to be passed around.
+node *root_node; 
+
 // FUNCTION PROTOTYPES.
 
 // Output and utility.
 
 void enqueue( node * new_node );
 node * dequeue( void );
-int height( node * root );
+int height( void );
 int path_to_root( node * root, node * child );
-void print_leaves( node * root );
-void print_tree( node * root );
+void print_leaves( void );
+void print_tree( void );
 node * find_leaf( node * root, unsigned char *key, bool verbose );
-// TODO: make find return dbRecord, only require key
-record * find( node * root, unsigned char *key, bool verbose ); // important
+record * find(unsigned char *key); // important
 int cut( int length );
 
 // Insertion.
@@ -132,8 +135,7 @@ node * insert_into_node_after_splitting(node * root, node * parent, int left_ind
 node * insert_into_parent(node * root, node * left, unsigned char *key, node * right);
 node * insert_into_new_root(node * left, unsigned char *key, node * right);
 node * start_new_tree(unsigned char *key, record * pointer);
-// TODO: only require record_ptr
-node * insert( node * root, dbRecord * record_ptr ); // important!
+node * insert( dbRecord * record_ptr ); // important!
 
 // Deletion.
 
@@ -143,8 +145,7 @@ node * coalesce_nodes(node * root, node * n, node * neighbor, int neighbor_index
 node * redistribute_nodes(node * root, node * n, node * neighbor, int neighbor_index, 
 			  int k_prime_index, unsigned char *k_prime);
 node * delete_entry( node * root, node * n, unsigned char *key, void * pointer );
-// TODO: only require key
-node * delete( node * root, unsigned char *key ); // important!
+node * delete(unsigned char *key ); // important!
 
 
 #endif
