@@ -32,7 +32,7 @@
  * of the value field.
  */
 typedef struct record {
-  int value;
+  dbRecord * record_ptr;	// no good very bad hack
 } record;
 
 /* Type representing a node in the B+ tree.
@@ -65,7 +65,7 @@ typedef struct record {
  */
 typedef struct node {
   void ** pointers;
-  int * keys;
+  unsigned char ** keys;
   struct node * parent;
   bool is_leaf;
   int num_keys;
@@ -112,36 +112,36 @@ int height( node * root );
 int path_to_root( node * root, node * child );
 void print_leaves( node * root );
 void print_tree( node * root );
-node * find_leaf( node * root, int key, bool verbose );
-record * find( node * root, int key, bool verbose );
+node * find_leaf( node * root, unsigned char *key, bool verbose );
+record * find( node * root, unsigned char *key, bool verbose );
 int cut( int length );
 
 // Insertion.
 
-record * make_record(int value);
+record * make_record(dbRecord * ptr);
 node * make_node( void );
 node * make_leaf( void );
 int get_left_index(node * parent, node * left);
-node * insert_into_leaf( node * leaf, int key, record * pointer );
-node * insert_into_leaf_after_splitting(node * root, node * leaf, int key, record * pointer);
+node * insert_into_leaf( node * leaf, unsigned char *key, record * pointer );
+node * insert_into_leaf_after_splitting(node * root, node * leaf, unsigned char *key, record * pointer);
 node * insert_into_node(node * root, node * parent, 
-			int left_index, int key, node * right);
+			int left_index, unsigned char *key, node * right);
 node * insert_into_node_after_splitting(node * root, node * parent, int left_index, 
-				   int key, node * right);
-node * insert_into_parent(node * root, node * left, int key, node * right);
-node * insert_into_new_root(node * left, int key, node * right);
-node * start_new_tree(int key, record * pointer);
-node * insert( node * root, int key, int value );
+				   unsigned char *key, node * right);
+node * insert_into_parent(node * root, node * left, unsigned char *key, node * right);
+node * insert_into_new_root(node * left, unsigned char *key, node * right);
+node * start_new_tree(unsigned char *key, record * pointer);
+node * insert( node * root, dbRecord * record_ptr );
 
 // Deletion.
 
 int get_neighbor_index( node * n );
 node * adjust_root(node * root);
-node * coalesce_nodes(node * root, node * n, node * neighbor, int neighbor_index, int k_prime);
+node * coalesce_nodes(node * root, node * n, node * neighbor, int neighbor_index, unsigned char *k_prime);
 node * redistribute_nodes(node * root, node * n, node * neighbor, int neighbor_index, 
-			  int k_prime_index, int k_prime);
-node * delete_entry( node * root, node * n, int key, void * pointer );
-node * delete( node * root, int key );
+			  int k_prime_index, unsigned char *k_prime);
+node * delete_entry( node * root, node * n, unsigned char *key, void * pointer );
+node * delete( node * root, unsigned char *key );
 
 
 #endif
