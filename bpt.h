@@ -113,7 +113,8 @@ int path_to_root( node * root, node * child );
 void print_leaves( node * root );
 void print_tree( node * root );
 node * find_leaf( node * root, unsigned char *key, bool verbose );
-record * find( node * root, unsigned char *key, bool verbose );
+// TODO: make find return dbRecord, only require key
+record * find( node * root, unsigned char *key, bool verbose ); // important
 int cut( int length );
 
 // Insertion.
@@ -131,7 +132,8 @@ node * insert_into_node_after_splitting(node * root, node * parent, int left_ind
 node * insert_into_parent(node * root, node * left, unsigned char *key, node * right);
 node * insert_into_new_root(node * left, unsigned char *key, node * right);
 node * start_new_tree(unsigned char *key, record * pointer);
-node * insert( node * root, dbRecord * record_ptr );
+// TODO: only require record_ptr
+node * insert( node * root, dbRecord * record_ptr ); // important!
 
 // Deletion.
 
@@ -141,7 +143,8 @@ node * coalesce_nodes(node * root, node * n, node * neighbor, int neighbor_index
 node * redistribute_nodes(node * root, node * n, node * neighbor, int neighbor_index, 
 			  int k_prime_index, unsigned char *k_prime);
 node * delete_entry( node * root, node * n, unsigned char *key, void * pointer );
-node * delete( node * root, unsigned char *key );
+// TODO: only require key
+node * delete( node * root, unsigned char *key ); // important!
 
 
 #endif
