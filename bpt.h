@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "dballoc.h"
+
 // Default order is 4.
 #define DEFAULT_ORDER 4
 
@@ -104,10 +106,6 @@ bool verbose_output = false;
 
 // Output and utility.
 
-void license_notice( void );
-void print_license( int licence_part );
-void usage_1( void );
-void usage_2( void );
 void enqueue( node * new_node );
 node * dequeue( void );
 int height( node * root );
